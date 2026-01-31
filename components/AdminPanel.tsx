@@ -51,7 +51,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
   const [backgroundImageUrl, setBackgroundImageUrl] = useState(currentBackgroundImageUrl || '');
   const [backgroundPos, setBackgroundPos] = useState(currentBackgroundPosition || '50% 50%');
   const [cardImageFit, setCardImageFit] = useState<'cover' | 'contain'>(currentCardImageFit || 'cover');
-  const [confirmSoldId, setConfirmSoldId] = useState<string | null>(null);
+
 
   // States para Logs
   const [accessLogs, setAccessLogs] = useState<AccessLog[]>([]);
@@ -420,63 +420,103 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
     if (user?.email) {
       logger.logAction(user.email, 'EDITAR', editName.toUpperCase(), `Atualização rápida: Preço ${formattedPrice}`);
     }
-
     setEditingId(null);
   };
 
   return (
-    <div className="fixed inset-0 z-[110] flex items-center justify-center px-4 bg-black/95 backdrop-blur-md">
-      <div className="w-full max-w-5xl bg-surface border border-white/10 p-6 sm:p-8 rounded-[2rem] shadow-2xl max-h-[90vh] flex flex-col relative overflow-hidden">
-        <div className="flex justify-between items-center mb-6 shrink-0">
-          <div>
-            <h2 className="font-heading text-gold text-2xl sm:text-3xl tracking-wider leading-none uppercase">Painel ADM</h2>
-            <p className="text-[9px] text-white/30 uppercase tracking-[0.4em] font-bold mt-2 ml-1">Sistema de Gestão Alfa Motos</p>
-          </div>
-          <button onClick={onClose} className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center text-white/50 hover:bg-gold hover:text-black hover:rotate-90 transition-all duration-300">
-            <span className="material-symbols-outlined text-xl">close</span>
-          </button>
+    <div className="fixed inset-0 z-[110] bg-surface flex flex-col md:flex-row overflow-hidden animate-in fade-in duration-300">
+
+      {/* SIDEBAR DO ADMIN (Esquerda) */}
+      <aside className="w-full md:w-72 bg-black/40 border-b md:border-b-0 md:border-r border-white/5 flex flex-col shrink-0 h-full">
+
+        {/* Header da Sidebar */}
+        <div className="p-8 border-b border-white/5">
+          <h2 className="font-heading text-gold text-2xl tracking-wider leading-none uppercase">Painel ADM</h2>
+          <p className="text-[9px] text-white/30 uppercase tracking-[0.4em] font-bold mt-2 ml-1">Gestão Alfa</p>
         </div>
 
-        <div className="flex gap-2 mb-8 overflow-x-auto pb-2 shrink-0 no-scrollbar">
+        {/* Menu de Navegação */}
+        <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
           {[
             { id: 'whatsapp', icon: 'settings', label: 'Configurações' },
-            { id: 'inventory', icon: 'garage_home', label: 'Estoque' },
+            { id: 'inventory', icon: 'garage_home', label: 'Gerenciar Estoque' },
             { id: 'upload', icon: 'add_circle', label: 'Novo Veículo' },
             { id: 'sold', icon: 'sell', label: 'Vendidos' },
           ].map(tab => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
-              className={`flex items-center gap-3 px-6 py-4 rounded-2xl transition-all whitespace-nowrap ${activeTab === tab.id
-                ? 'bg-gold text-black shadow-lg shadow-gold/20'
-                : 'bg-white/5 text-white/40 hover:bg-white/10 hover:text-white'
+              className={`w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 group ${activeTab === tab.id
+                ? 'bg-gold text-black shadow-lg shadow-gold/10'
+                : 'text-white/40 hover:bg-white/5 hover:text-white'
                 }`}
             >
-              <span className="material-symbols-outlined text-lg">{tab.icon}</span>
-              <span className="text-[10px] font-bold uppercase tracking-widest">{tab.label}</span>
+              <span className={`material-symbols-outlined text-lg ${activeTab === tab.id ? 'fill' : ''}`}>{tab.icon}</span>
+              <span className="text-[11px] font-bold uppercase tracking-widest text-left flex-1">{tab.label}</span>
+              {activeTab === tab.id && <span className="material-symbols-outlined text-xs">chevron_right</span>}
             </button>
           ))}
 
           {/* Botão Secreto de Monitoramento */}
           <button
             onClick={() => setActiveTab('logs')}
-            className={`px-4 py-4 rounded-2xl transition-all hover:bg-white/10 ${activeTab === 'logs' ? 'text-white bg-white/10' : 'text-white/5'}`}
+            className={`w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 mt-4 ${activeTab === 'logs' ? 'bg-white/10 text-white' : 'text-white/20 hover:text-white/50'}`}
             title="Monitoramento"
           >
             <span className="material-symbols-outlined text-lg">visibility_off</span>
+            <span className="text-[10px] font-bold uppercase tracking-widest text-left flex-1">Logs</span>
           </button>
+        </nav>
 
-          <button onClick={signOut} className="flex items-center gap-3 px-6 py-4 rounded-2xl bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all ml-auto whitespace-nowrap">
-            <span className="material-symbols-outlined text-lg">logout</span>
-            <span className="text-[10px] font-bold uppercase tracking-widest">Sair</span>
+        {/* Footer da Sidebar (User + Logout) */}
+        <div className="p-4 border-t border-white/5 bg-white/5">
+          <div className="flex items-center gap-3 mb-4 px-2">
+            <div className="w-8 h-8 rounded-full bg-gold/20 flex items-center justify-center text-gold">
+              <span className="material-symbols-outlined text-sm">person</span>
+            </div>
+            <div className="flex flex-col overflow-hidden">
+              <span className="text-[10px] text-white/40 font-bold uppercase tracking-widest">Logado como</span>
+              <span className="text-xs text-white font-bold truncate w-full">{user?.email}</span>
+            </div>
+          </div>
+
+          <button
+            onClick={() => signOut()}
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-red-600/10 hover:bg-red-600 text-red-500 hover:text-white rounded-xl border border-red-600/20 transition-all font-bold text-[10px] uppercase tracking-widest"
+          >
+            <span className="material-symbols-outlined text-sm">logout</span> Sair do Sistema
+          </button>
+        </div>
+      </aside>
+
+
+      {/* ÁREA DE CONTEÚDO (Direita) */}
+      <div className="flex-1 flex flex-col h-full overflow-hidden bg-surface relative">
+
+        {/* Header Mobile Only (Close button) */}
+        <div className="absolute top-4 right-4 z-50">
+          <button onClick={onClose} className="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center text-white/50 hover:bg-red-500 hover:text-white transition-all duration-300">
+            <span className="material-symbols-outlined text-lg">close</span>
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
+        {/* Conteúdo Scrollável */}
+        <div className="flex-1 overflow-y-auto p-4 md:p-12 custom-scrollbar">
+
+          {/* Título da Seção Atual */}
+          <div className="mb-8 border-b border-white/5 pb-4">
+            <h1 className="text-3xl font-heading text-white uppercase tracking-wider">
+              {activeTab === 'whatsapp' && 'Configurações'}
+              {activeTab === 'inventory' && 'Gerenciar Estoque'}
+              {activeTab === 'upload' && 'Cadastrar Veículo'}
+              {activeTab === 'sold' && 'Veículos Vendidos'}
+              {activeTab === 'logs' && 'Logs do Sistema'}
+            </h1>
+          </div>
 
           {activeTab === 'whatsapp' && (
-            <div className="space-y-6 animate-in fade-in duration-300">
-              <div className="bg-white/5 p-8 rounded-[2rem] border border-white/5 space-y-8">
+            <div className="space-y-6 animate-in fade-in duration-300 w-full max-w-none">
+              <div className="space-y-8">
                 <div>
                   <h3 className="text-gold text-[10px] font-bold uppercase tracking-widest mb-4 flex items-center gap-2">
                     <span className="material-symbols-outlined text-lg">location_on</span> Localização da Loja
@@ -652,26 +692,28 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
                   </div>
                 </div>
               </div>
-              <button
-                onClick={async () => {
-                  try {
-                    await onSaveSettings({
-                      whatsappNumbers: numbers.filter(n => n.trim() !== ''),
-                      googleMapsUrl: mapsUrl,
-                      backgroundImageUrl: backgroundImageUrl,
-                      backgroundPosition: backgroundPos,
-                      cardImageFit: cardImageFit
-                    });
-                    alert('Configurações salvas com sucesso!');
-                  } catch (error) {
-                    console.error("Erro ao salvar:", error);
-                    alert("Erro ao salvar configurações.");
-                  }
-                }}
-                className="w-full py-5 bg-gold text-black font-heading text-[11px] tracking-[0.3em] rounded-full shadow-xl hover:brightness-110 active:scale-95 transition-all"
-              >
-                SALVAR TUDO
-              </button>
+              <div className="flex justify-start">
+                <button
+                  onClick={async () => {
+                    try {
+                      await onSaveSettings({
+                        whatsappNumbers: numbers.filter(n => n.trim() !== ''),
+                        googleMapsUrl: mapsUrl,
+                        backgroundImageUrl: backgroundImageUrl,
+                        backgroundPosition: backgroundPos,
+                        cardImageFit: cardImageFit
+                      });
+                      alert('Configurações salvas com sucesso!');
+                    } catch (error) {
+                      console.error("Erro ao salvar:", error);
+                      alert("Erro ao salvar configurações.");
+                    }
+                  }}
+                  className="w-full md:w-auto px-12 py-3 bg-gold text-black font-heading text-[10px] tracking-[0.3em] rounded-full shadow-xl hover:brightness-110 active:scale-95 transition-all"
+                >
+                  SALVAR TUDO
+                </button>
+              </div>
             </div>
           )}
 
@@ -891,13 +933,13 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
                   </div>
                 </div>
 
-                <div className="flex gap-4">
+                <div className="flex justify-start gap-4">
                   {fullEditingId && (
-                    <button type="button" onClick={resetForm} className="flex-1 py-6 bg-white/5 text-white text-[13px] font-heading tracking-[0.3em] rounded-full hover:bg-white/10 transition-all">
+                    <button type="button" onClick={resetForm} className="w-full md:w-auto px-12 py-4 bg-white/5 text-white text-[12px] font-heading tracking-[0.3em] rounded-full hover:bg-white/10 transition-all">
                       CANCELAR
                     </button>
                   )}
-                  <button type="submit" disabled={isUploading} className={`flex-1 py-6 bg-gold text-black text-[13px] font-heading tracking-[0.3em] rounded-full shadow-2xl transition-all ${isUploading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gold-light active:scale-[0.98]'}`}>
+                  <button type="submit" disabled={isUploading} className={`w-full md:w-auto px-12 py-4 bg-gold text-black text-[12px] font-heading tracking-[0.3em] rounded-full shadow-2xl transition-all ${isUploading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gold-light active:scale-[0.98]'}`}>
                     {isUploading ? 'PROCESSANDO...' : fullEditingId ? 'ATUALIZAR VEÍCULO' : 'PUBLICAR NO CATÁLOGO'}
                   </button>
                 </div>
@@ -909,9 +951,12 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
             activeTab === 'inventory' && (
               <div className="space-y-4 pb-10">
                 {vehicles.filter(v => !v.isSold).map(v => (
-                  <div key={v.id} className="bg-white/5 p-4 rounded-3xl border border-white/5 flex items-start gap-4 group hover:border-white/20 transition-all">
-                    <img src={v.imageUrl} className="w-20 h-20 rounded-2xl object-cover border border-white/5 shrink-0 mt-1" />
-                    <div className="flex-1 min-w-0">
+                  <div key={v.id} className="bg-white/5 p-4 rounded-3xl border border-white/5 flex flex-col md:flex-row items-start md:items-center gap-6 group hover:border-white/20 transition-all">
+                    {/* Imagem */}
+                    <img src={v.imageUrl} className="w-full md:w-32 h-32 rounded-2xl object-cover border border-white/5 shrink-0" />
+
+                    {/* Info + Detalhes */}
+                    <div className="flex-1 w-full min-w-0 flex flex-col justify-center">
                       {editingId === v.id ? (
                         <div className="flex flex-col gap-2">
                           <input value={editName} onChange={(e) => setEditName(e.target.value)} className="w-full bg-surface-light border border-gold/50 text-white text-[11px] px-3 py-1.5 rounded-lg focus:outline-none uppercase font-heading tracking-wider" />
@@ -923,46 +968,74 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
                           <input value={editSpecs} onChange={e => setEditSpecs(e.target.value)} className="w-full bg-surface-light border border-white/10 text-white text-[10px] px-3 py-1.5 rounded-lg focus:outline-none" placeholder="Specs" />
                         </div>
                       ) : (
-                        <div className="cursor-pointer group/info" onClick={() => openFullEdit(v)}>
-                          <div className="flex items-center gap-2 mb-1">
-                            <h4 className="text-white text-xs font-heading tracking-wider truncate uppercase group-hover/info:text-gold transition-colors">{v.name}</h4>
-                            {v.plate_last3 && <span className="text-[8px] bg-white/10 text-white/50 px-1.5 py-0.5 rounded font-mono border border-white/5">{v.plate_last3}</span>}
-                            {v.isFeatured && <span className="text-[8px] bg-gold text-black px-1.5 rounded font-bold uppercase">Destaque</span>}
+                        <div className="cursor-pointer group/info pl-2" onClick={() => openFullEdit(v)}>
+                          <div className="flex flex-wrap items-center gap-2 mb-2">
+                            <h4 className="text-white text-base font-heading tracking-wider truncate uppercase group-hover/info:text-gold transition-colors">{v.name}</h4>
+                            {v.plate_last3 && <span className="text-[10px] bg-white/10 text-white/50 px-2 py-0.5 rounded font-mono border border-white/5">{v.plate_last3}</span>}
+                            {v.isFeatured && <span className="text-[10px] bg-gold text-black px-2 py-0.5 rounded font-bold uppercase">Destaque</span>}
+                            {v.isPromoSemana && <span className="text-[10px] bg-red-500 text-white px-2 py-0.5 rounded font-bold uppercase">Promoção</span>}
                           </div>
-                          <p className="text-gold text-[10px] font-bold">R$ {typeof v.price === 'number' ? v.price.toLocaleString('pt-BR') : v.price}</p>
+
+                          <p className="text-gold text-sm font-bold mb-3">R$ {typeof v.price === 'number' ? v.price.toLocaleString('pt-BR') : v.price}</p>
+
+                          {/* Grid de Detalhes */}
+                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-y-2 gap-x-6 text-[11px] opacity-60">
+                            <div>
+                              <span className="block text-[8px] uppercase tracking-widest opacity-50">Ano</span>
+                              <span className="font-bold text-white">{v.year || '-'}</span>
+                            </div>
+                            <div>
+                              <span className="block text-[8px] uppercase tracking-widest opacity-50">KM</span>
+                              <span className="font-bold text-white uppercase">{v.km || '-'}</span>
+                            </div>
+                            <div>
+                              <span className="block text-[8px] uppercase tracking-widest opacity-50">Cor</span>
+                              <span className="font-bold text-white uppercase">{v.color || '-'}</span>
+                            </div>
+                            <div>
+                              <span className="block text-[8px] uppercase tracking-widest opacity-50">Combustível</span>
+                              <span className="font-bold text-white uppercase">Flex</span>
+                            </div>
+                          </div>
                         </div>
                       )}
                     </div>
-                    <div className="flex flex-col items-center gap-2 pt-1 shrink-0">
+
+                    {/* Botões de Ação (Agora na Horizontal) */}
+                    <div className="w-full md:w-auto flex flex-row items-center justify-end gap-2 pt-4 md:pt-0 pl-2 shrink-0 border-t md:border-t-0 md:border-l border-white/5 md:pl-6">
                       {editingId === v.id ? (
                         <>
                           <button onClick={() => saveInlineEdit(v.id)} className="w-10 h-10 flex items-center justify-center bg-gold text-black rounded-full shadow-lg hover:scale-110 transition-all"><span className="material-symbols-outlined text-xl">check</span></button>
                           <button onClick={() => setEditingId(null)} className="w-10 h-10 flex items-center justify-center bg-white/10 text-white/50 rounded-full hover:bg-white/20 transition-all"><span className="material-symbols-outlined text-xl">close</span></button>
                         </>
                       ) : (
-                        <>
-                          <button onClick={() => openFullEdit(v)} className="w-8 h-8 flex items-center justify-center bg-white/5 rounded-full text-blue-400 hover:bg-blue-400/20 transition-all" title="Editar Completo">
-                            <span className="material-symbols-outlined text-[18px]">edit</span>
+                        <div className="flex gap-2">
+                          <button onClick={() => openFullEdit(v)} className="w-10 h-10 flex items-center justify-center bg-white/5 rounded-xl text-blue-400 hover:bg-blue-400/20 hover:scale-110 transition-all" title="Editar">
+                            <span className="material-symbols-outlined text-[20px]">edit</span>
                           </button>
                           <button onClick={() => {
                             onUpdateVehicle(v.id, { isFeatured: !v.isFeatured });
                             if (user?.email) logger.logAction(user.email, 'EDITAR', v.name, v.isFeatured ? 'Removeu Destaque' : 'Destacou');
-                          }} className={`w-8 h-8 flex items-center justify-center rounded-full transition-all ${v.isFeatured ? 'bg-gold/20 text-gold' : 'bg-white/5 text-white/20 hover:text-gold hover:bg-gold/10'}`} title={v.isFeatured ? "Remover Destaque" : "Destacar Veículo"}>
-                            <span className="material-symbols-outlined text-[18px]">star</span>
+                          }} className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all hover:scale-110 ${v.isFeatured ? 'bg-gold text-black shadow-lg shadow-gold/20' : 'bg-white/5 text-white/20 hover:text-gold hover:bg-gold/10'}`} title={v.isFeatured ? "Remover Destaque" : "Destacar Veículo"}>
+                            <span className="material-symbols-outlined text-[20px] fill">star</span>
                           </button>
                           <button onClick={() => {
                             onUpdateVehicle(v.id, { isPromoSemana: !v.isPromoSemana });
                             if (user?.email) logger.logAction(user.email, 'EDITAR', v.name, v.isPromoSemana ? 'Removeu Promoção' : 'Colocou em Promoção');
-                          }} className={`w-8 h-8 flex items-center justify-center rounded-full transition-all ${v.isPromoSemana ? 'bg-red-500/20 text-red-500' : 'bg-white/5 text-white/20 hover:text-red-500 hover:bg-red-500/10'}`} title={v.isPromoSemana ? "Remover Promoção" : "Colocar em Promoção"}>
-                            <span className="material-symbols-outlined text-[18px]">local_fire_department</span>
+                          }} className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all hover:scale-110 ${v.isPromoSemana ? 'bg-red-500 text-white shadow-lg shadow-red-500/20' : 'bg-white/5 text-white/20 hover:text-red-500 hover:bg-red-500/10'}`} title={v.isPromoSemana ? "Remover Promoção" : "Colocar em Promoção"}>
+                            <span className="material-symbols-outlined text-[20px]">local_fire_department</span>
                           </button>
-                          <button onClick={() => setConfirmSoldId(v.id)} className={`w-8 h-8 flex items-center justify-center rounded-full transition-all ${v.isSold ? 'bg-green-500/20 text-green-500' : 'bg-white/5 text-yellow-500 hover:bg-yellow-500/20'}`} title={v.isSold ? "Marcar como Disponível" : "Marcar como Vendido"}>
-                            <span className="material-symbols-outlined text-[18px]">{v.isSold ? 'check_circle' : 'sell'}</span>
+                          <button onClick={() => {
+                            onUpdateVehicle(v.id, { isSold: !v.isSold });
+                            if (user?.email) logger.logAction(user.email, 'EDITAR', v.name, v.isSold ? 'Marcou como Disponível' : 'Marcou como Vendido');
+                          }} className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all hover:scale-110 ${v.isSold ? 'bg-green-500 text-white' : 'bg-white/5 text-white/20 hover:text-green-500 hover:bg-green-500/10'}`} title={v.isSold ? "Marcar como Disponível" : "Marcar como Vendido"}>
+                            <span className="material-symbols-outlined text-[20px]">{v.isSold ? 'check_circle' : 'sell'}</span>
                           </button>
-                          <button onClick={() => onDeleteVehicle(v.id)} className="w-8 h-8 flex items-center justify-center bg-white/5 rounded-full text-red-500 hover:bg-red-500/20 transition-all" title="Excluir">
-                            <span className="material-symbols-outlined text-[18px]">delete</span>
+                          <div className="w-px h-8 bg-white/10 mx-1"></div>
+                          <button onClick={() => onDeleteVehicle(v.id)} className="w-10 h-10 flex items-center justify-center bg-white/5 rounded-xl text-white/20 hover:text-red-500 hover:bg-red-500/10 hover:scale-110 transition-all" title="Excluir">
+                            <span className="material-symbols-outlined text-[20px]">delete</span>
                           </button>
-                        </>
+                        </div>
                       )}
                     </div>
                   </div>
@@ -987,7 +1060,10 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
                       <span className="text-[9px] text-green-500/80 uppercase font-bold tracking-wider block mt-1">VENDIDO</span>
                     </div>
                     <div className="flex flex-col items-center gap-2 pt-1 shrink-0">
-                      <button onClick={() => setConfirmSoldId(v.id)} className="w-8 h-8 flex items-center justify-center rounded-full bg-green-500/20 text-green-500 transition-all" title="Marcar como Disponível">
+                      <button onClick={() => {
+                        onUpdateVehicle(v.id, { isSold: !v.isSold });
+                        if (user?.email) logger.logAction(user.email, 'EDITAR', v.name, v.isSold ? 'Marcou como Disponível' : 'Marcou como Vendido');
+                      }} className="w-8 h-8 flex items-center justify-center rounded-full bg-green-500/20 text-green-500 transition-all" title="Marcar como Disponível">
                         <span className="material-symbols-outlined text-[18px]">undo</span>
                       </button>
                       <button onClick={() => onDeleteVehicle(v.id)} className="w-8 h-8 flex items-center justify-center bg-white/5 rounded-full text-red-500 hover:bg-red-500/20 transition-all" title="Excluir do Histórico">
@@ -1203,35 +1279,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
 
 
 
-          {confirmSoldId && (
-            <div className="absolute inset-0 z-[120] bg-black/80 backdrop-blur-md flex items-center justify-center p-8">
-              <div className="bg-surface border border-white/10 p-10 rounded-[2.5rem] max-w-sm w-full text-center space-y-8 shadow-3xl">
-                <span className="material-symbols-outlined text-red-500 text-5xl">shopping_cart_checkout</span>
-                <h3 className="text-white font-heading text-xl uppercase tracking-wider">Confirmar Alteração</h3>
-                <p className="text-white/50 text-xs">
-                  {vehicles.find(v => v.id === confirmSoldId)?.isSold
-                    ? "Deseja marcar este veículo como DISPONÍVEL novamente?"
-                    : "Deseja marcar este veículo como VENDIDO? Ele sairá da vitrine principal."}
-                </p>
-                <div className="flex flex-col gap-3">
-                  <button
-                    onClick={() => {
-                      const v = vehicles.find(v => v.id === confirmSoldId);
-                      if (v) {
-                        onUpdateVehicle(confirmSoldId, { isSold: !v.isSold });
-                        if (user?.email) logger.logAction(user.email, 'EDITAR', v.name, v.isSold ? 'Marcou como Disponível' : 'Marcou como Vendido');
-                      }
-                      setConfirmSoldId(null);
-                    }}
-                    className="w-full py-5 bg-gold text-black text-[11px] font-bold uppercase tracking-widest rounded-full hover:brightness-110"
-                  >
-                    Sim, confirmar
-                  </button>
-                  <button onClick={() => setConfirmSoldId(null)} className="w-full py-5 bg-white/5 text-white/50 text-[11px] font-bold uppercase tracking-widest rounded-full hover:bg-white/10 hover:text-white transition-all">Cancelar</button>
-                </div>
-              </div>
-            </div>
-          )}
+
         </div>
       </div>
     </div>

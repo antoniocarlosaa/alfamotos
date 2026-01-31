@@ -57,6 +57,16 @@ const Sidebar: React.FC<SidebarProps> = ({ filter, setFilter, onAdminClick, visi
             <div className="p-4 mt-auto border-t border-white/5 space-y-4">
 
 
+                {/* Admin Access Button */}
+                <button
+                    onClick={onAdminClick}
+                    className="w-full mb-4 flex items-center gap-3 px-4 py-3 bg-white/5 hover:bg-red-600/20 text-white/50 hover:text-red-500 rounded-xl transition-all group"
+                    title="Acesso Administrativo"
+                >
+                    <span className="material-symbols-outlined group-hover:scale-110 transition-transform">lock_person</span>
+                    <span className="text-[10px] font-bold uppercase tracking-widest">Área Restrita</span>
+                </button>
+
                 {/* Status / Copyright */}
                 <div className="px-2 pt-2">
                     <div className="flex items-center gap-2 text-white/20 text-[10px] font-bold uppercase tracking-widest mb-2">

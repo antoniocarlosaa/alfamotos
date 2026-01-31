@@ -72,8 +72,9 @@ const Header: React.FC<HeaderProps> = ({ filter, setFilter, onAdminClick }) => {
                         onClick={onAdminClick}
                         className="w-10 h-10 flex items-center justify-center text-white/80 hover:text-gold transition-colors rounded-full hover:bg-white/10"
                         aria-label="Admin Panel"
+                        title="Área Restrita"
                     >
-                        <span className="material-symbols-outlined">settings</span>
+                        <span className="material-symbols-outlined">admin_panel_settings</span>
                     </button>
 
                     {/* Mobile Menu Toggle could go here (simplified for now to rely on layout) */}

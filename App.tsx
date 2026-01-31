@@ -279,7 +279,12 @@ const App: React.FC = () => {
 
           {/* Desktop Footer (Simplified, mostly in Sidebar now) */}
           <footer className="hidden md:block w-full py-6 text-center border-t border-white/5 mt-16">
-            <span className="text-[10px] text-white/20 uppercase tracking-widest font-bold">AC SOLUCOES 98 981489667 &copy; {new Date().getFullYear()}</span>
+            <div className="flex flex-col items-center gap-2">
+              <span className="text-[10px] text-white/20 uppercase tracking-widest font-bold">AC SOLUCOES 98 981489667 &copy; {new Date().getFullYear()}</span>
+              <button onClick={handleAdminClick} className="text-[9px] text-white/10 hover:text-white/30 uppercase tracking-widest font-bold transition-colors">
+                Acesso Admin
+              </button>
+            </div>
           </footer>
 
         </main>
