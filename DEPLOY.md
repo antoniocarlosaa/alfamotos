@@ -39,7 +39,7 @@ Na tela de configuração de "Configure Project":
     Clique para expandir a seção "Environment Variables" e adicione:
 
     *   **Nome**: `VITE_SUPABASE_URL`
-    *   **Valor**: `https://goacxbpdikiljwuafjbr.supabase.co`
+    *   **Valor**: `https://dwdcbvpgoypfgeeruipe.supabase.co`
     *   Clique em **Add**.
 
     *   **Nome**: `VITE_SUPABASE_ANON_KEY`
