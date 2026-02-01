@@ -38,6 +38,19 @@ const BottomNav: React.FC<BottomNavProps> = ({ filter, setFilter, onAdminClick }
                         </button>
                     );
                 })}
+
+                {/* Admin Button */}
+                <button
+                    onClick={onAdminClick}
+                    className="flex flex-col items-center justify-center gap-1 transition-all duration-300 w-12 text-white/40 hover:text-white/60"
+                >
+                    <div className="p-1.5 rounded-full bg-transparent">
+                        <span className="material-symbols-outlined text-2xl">
+                            lock
+                        </span>
+                    </div>
+                    {/* Ghost element to maintain alignment if needed, or hidden label */}
+                </button>
             </div>
         </div>
     );
