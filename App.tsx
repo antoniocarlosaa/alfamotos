@@ -171,6 +171,9 @@ const App: React.FC = () => {
   return (
     <div className="flex flex-col min-h-screen bg-background font-sans relative">
       {/* LAYOUT CONTAINER */}
+      <div className="w-full bg-red-600 text-white text-center font-bold py-1 z-[9999] relative">
+          V3.2 DEBUG MODE - CHECKING DEPLOYMENT
+      </div>
       <div className="flex w-full min-h-screen">
 
         {/* SIDEBAR (Desktop) */}
